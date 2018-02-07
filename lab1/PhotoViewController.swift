@@ -9,10 +9,10 @@
 import UIKit
 import AlamofireImage
 
-class PhotoViewController: UIViewController, UITableViewDataSource {
+class PhotoViewController: UIViewController, UITableViewDataSource, UITableViewDelegate{
     
     var posts: [[String: Any]] = []
-
+    
     @IBOutlet weak var tableView: UITableView!
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -21,7 +21,6 @@ class PhotoViewController: UIViewController, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PhotoCell", for: indexPath) as! PhotoCell
-        
         let post = posts[indexPath.row]
         if let photos = post["photos"] as? [[String: Any]] {
 
@@ -35,13 +34,21 @@ class PhotoViewController: UIViewController, UITableViewDataSource {
         let url = URL(string: urlString)
         
         cell.PhotoCell.af_setImage(withURL: url!)
-
+        
         }
         return cell
     }
     
-
-
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destinationViewController = segue.destination as! PhotoDetailsViewController
+        let cell = sender as! UITableViewCell
+        let indexPath = tableView.indexPath(for: cell)!
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
@@ -72,6 +79,8 @@ class PhotoViewController: UIViewController, UITableViewDataSource {
         
 
     }
+  
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
